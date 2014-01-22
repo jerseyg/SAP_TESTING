@@ -1,0 +1,147 @@
+*&---------------------------------------------------------------------*
+*& Report  Z_CHARACTER_STRINGS
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  Z_CHARACTER_STRINGS.
+
+
+*Concatenating Strings Fields
+
+*CONCATENATE f1 f2 INTO d1 SEPARATED BY sep.
+
+DATA: title(15) TYPE c VALUE 'Mr',
+      surname(40) TYPE c VALUE 'smith',
+      forename(40) TYPE c VALUE 'Joe',
+      sep,
+      DESTINATION(200) TYPE c,
+      SPACE_NAME(50) TYPE c VALUE 'Mr       Joe     Smith',
+      LEN TYPE i,
+      SURNAME2(40),
+      EMPL_NUM(10).
+DATA: MYSTRING(30) TYPE c,
+      A1(10) TYPE c,
+      A2(10) TYPE c,
+      A3(10) TYPE c,
+      SEP2(2) TYPE c VALUE '**'.
+DATA: INT_TELEPHONE_NUM(17) TYPE c,
+      COUNTRY_CODE(3) TYPE c,
+      TELEPHONE_NUM(14) TYPE c.
+
+CONCATENATE title surname forename INTO DESTINATION.
+WRITE DESTINATION.
+ULINE.
+*------------------------------------------------*
+CONCATENATE title surname forename INTO DESTINATION SEPARATED BY sep.
+WRITE DESTINATION.
+ULINE.
+
+
+*-------------Condensing Character Strings--------------*
+
+CONDENSE SPACE_NAME.
+WRITE SPACE_NAME.
+ULINE.
+
+
+CONDENSE SPACE_NAME NO-GAPS.
+WRITE SPACE_NAME.
+ULINE.
+
+*-------------Find length of  Character Strings--------------*
+
+LEN = strlen( surname ).
+WRITE: 'The length of the SURNAME field is', LEN.
+ULINE.
+
+*-------------Replacing Character Strings--------------*
+
+SURNAME2 = 'Mr, Joe, Smith'.
+REPLACE ',' WITH '.' INTO SURNAME2.
+WRITE SURNAME2.
+ULINE.
+
+WHILE SY-SUBRC = 0.
+  REPLACE ',' WITH '.' INTO SURNAME2.
+ENDWHILE.
+WRITE SURNAME2.
+ULINE.
+
+*-------------Search Character Strings--------------*
+SURNAME = 'Mr. Joe. Smith'.
+
+WRITE: / 'Searching: "Mr. Joe Smith"'.
+SKIP.
+
+
+SEARCH SURNAME2 FOR 'Joe     '.
+WRITE: / 'Searching for "Joe     "'.
+WRITE: /'sy-subrc: ', sy-subrc, / 'sy-fdpos: ', sy-fdpos.
+ULINE.
+
+
+SEARCH SURNAME2 FOR '.Joe     .'.
+WRITE: / 'Searching for ".Joe     ."'.
+WRITE: /'sy-subrc: ', sy-subrc, / 'sy-fdpos: ', sy-fdpos.
+ULINE.
+
+
+SEARCH SURNAME2 FOR '*ith'.
+WRITE: / 'Searching for "*ith"'.
+WRITE: /'sy-subrc: ', sy-subrc, / 'sy-fdpos: ', sy-fdpos.
+ULINE.
+
+
+SEARCH SURNAME2 FOR 'smi*'.
+WRITE: / 'Searching for "smi*"'.
+WRITE: /'sy-subrc: ', sy-subrc, / 'sy-fdpos: ', sy-fdpos.
+ULINE.
+
+
+*-------------SHIFT Statements--------------*
+
+
+EMPL_NUM = '0000654321'.
+
+SHIFT EMPL_NUM LEFT DELETING LEADING '0'.
+
+WRITE: / EMPL_NUM.
+
+EMPL_NUM = '0000654321'.
+
+SHIFT EMPL_NUM CIRCULAR.
+WRITE: / EMPL_NUM.
+ULINE.
+
+*-------------SPLIT Statements--------------*
+
+
+*MYSTRING = '1234** ABCD **6789'.
+MYSTRING = '1234** ABCD **6789**WXYZ'.
+WRITE MYSTRING.
+SKIP.
+
+SPLIT MYSTRING AT SEP2 INTO A1 A2 A3.
+
+WRITE: / A1.
+WRITE: / A2.
+WRITE: / A3.
+ULINE.
+
+*-------------Subfields syntax--------------*
+
+
+
+INT_TELEPHONE_NUM = '+44-(0)207-123456'.
+COUNTRY_CODE = INT_TELEPHONE_NUM(3).
+TELEPHONE_NUM = INT_TELEPHONE_NUM+4(13).
+
+WRITE / COUNTRY_CODE.
+WRITE / TELEPHONE_NUM.
+
+COUNTRY_CODE+1(2) = '01'.
+
+WRITE / COUNTRY_CODE.
